@@ -1,15 +1,24 @@
-import { Text, View } from "react-native";
+import { PropsWithChildren } from "react";
+import { StyleSheet, Text, View } from "react-native";
 
-export default function Index() {
+export const CustomText = ({ children }: PropsWithChildren) => (
+  <Text>{children}</Text>
+);
+
+export default function HomeScreen() {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
+    <View style={styles.container}>
+      <CustomText>Bienvenido a CCP Fuerza de ventas!</CustomText>
+      <CustomText>Edite app/index.tsx para editar esta pantalla</CustomText>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});

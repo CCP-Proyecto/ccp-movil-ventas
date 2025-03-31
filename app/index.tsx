@@ -1,15 +1,29 @@
-import { PropsWithChildren } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { useRouter } from "expo-router";
+import { View, Text, Button, StyleSheet } from "react-native";
 
-export const CustomText = ({ children }: PropsWithChildren) => (
-  <Text>{children}</Text>
-);
+export default function Home() {
+  const router = useRouter();
 
-export default function HomeScreen() {
   return (
     <View style={styles.container}>
-      <CustomText>Bienvenido a CCP Fuerza de ventas!</CustomText>
-      <CustomText>Edite app/index.tsx para editar esta pantalla</CustomText>
+      <Text style={styles.title}>Menú Principal</Text>
+      <Button
+        title="Clientes"
+        onPress={() => router.push("/clientes")}
+      />
+      <Button
+        title="Rutas"
+        onPress={() => router.push("/rutas")}
+      />
+      <Button
+        title="Visitas"
+        onPress={() => router.push("/visitas")}
+      />
+      <Button
+        title="Cerrar Sesión"
+        color="red"
+        onPress={() => router.replace("/login")}
+      />
     </View>
   );
 }
@@ -17,8 +31,9 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
   },
+  title: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
 });

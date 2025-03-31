@@ -1,17 +1,14 @@
+import React from "react";
 import { render } from "@testing-library/react-native";
+import Home from "@/app/index";
 
-import HomeScreen, { CustomText } from "@/app/index";
+describe("Home Screen", () => {
+  it("debería mostrar los 4 botones del menú", () => {
+    const { getByText } = render(<Home />);
 
-describe("<HomeScreen />", () => {
-  //   test("Text renders correctly on HomeScreen", () => {
-  //     const { getByText } = render(<HomeScreen />);
-
-  //     getByText("Bienvenido a CCP Fuerza de ventas!");
-  //   });
-
-  test("CustomText renders correctly", () => {
-    const tree = render(<CustomText>Some text</CustomText>).toJSON();
-
-    expect(tree).toMatchSnapshot();
+    expect(getByText("Clientes")).toBeTruthy();
+    expect(getByText("Rutas")).toBeTruthy();
+    expect(getByText("Visitas")).toBeTruthy();
+    expect(getByText("Cerrar Sesión")).toBeTruthy();
   });
 });

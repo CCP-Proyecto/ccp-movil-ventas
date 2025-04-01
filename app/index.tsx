@@ -59,10 +59,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     padding: 20,
-    justifyContent: "center", // Centra verticalmente
+    justifyContent: "center",
   },
   contentContainer: {
-    alignItems: "center", // Centra horizontalmente
+    alignItems: "center",
     width: "100%",
   },
   logo: {

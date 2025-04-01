@@ -10,7 +10,6 @@ export const styles = StyleSheet.create({
     borderRadius: 25,
     alignItems: "center",
     width: "80%",
-    // Propiedades de la sombra
     shadowColor: "#000",
     shadowOffset: {
       width: 0,

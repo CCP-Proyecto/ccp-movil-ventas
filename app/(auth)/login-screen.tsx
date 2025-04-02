@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, SafeAreaView, StyleSheet } from "react-native";
+import { Redirect } from "expo-router";
 
 import { authClient } from "@/services/auth/auth-client";
+import { APP_CONFIG } from "@/constants";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { colors } from "@/theme/colors";
@@ -10,16 +12,31 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  //* Esto serviría para verificar si el usuario ya está autenticado
-  // const { error, data: session } = authClient.useSession();
-
   const handleLogin = async () => {
-    const { error } = await authClient.signIn.email({
-      email,
-      password,
-    });
+    try {
+      const { error, data } = await authClient.signIn.email(
+        {
+          email,
+          password,
+        },
+        {
+          body: {
+            app: APP_CONFIG.APP_ID,
+          },
+        },
+      );
 
-    if (error) console.error("Error de inicio de sesión:", error);
+      if (data) {
+        return <Redirect href={"/(app)/home"} />;
+      }
+      if (error) {
+        console.error("Error de inicio de sesión:", error);
+        //TODO: Mostrar un mensaje al usuario usando Toast
+      }
+    } catch (e) {
+      console.error("Error al conectar con el servidor:", e);
+      //TODO: Mostrar un mensaje al usuario usando Toast
+    }
   };
 
   return (

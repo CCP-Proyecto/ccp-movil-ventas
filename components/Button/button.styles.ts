@@ -37,6 +37,6 @@ export const styles = StyleSheet.create({
     elevation: 0,
   },
   textButtonText: {
-    color: colors.primary,
+    color: colors.secondary,
   },
 });

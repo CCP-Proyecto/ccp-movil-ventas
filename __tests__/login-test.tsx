@@ -1,13 +1,25 @@
 import React from "react";
 import { render, fireEvent } from "@testing-library/react-native";
-import Login from "@/app/(auth)/login-screen"; // Asegúrate de que apunta al archivo correcto, no a index.tsx
+
+import Login from "@/app/(auth)/login-screen";
 
 // Mock del cliente de autenticación
 jest.mock("@/services/auth/auth-client", () => ({
   authClient: {
     useSession: jest.fn(() => ({ data: null })),
-    signIn: jest.fn(),
+    signIn: {
+      email: jest
+        .fn()
+        .mockResolvedValue({ data: { user: { id: 1 } }, error: null }),
+    },
     signOut: jest.fn(),
+  },
+}));
+
+// Asegurar que los componentes importados están correctamente mockeados
+jest.mock("@/constants", () => ({
+  APP_CONFIG: {
+    APP_ID: "test-app-id",
   },
 }));
 
@@ -58,5 +70,31 @@ describe("Login Screen", () => {
       fontSize: 48,
       textAlign: "center",
     });
+  });
+
+  it("calls signIn.email when login button is pressed", async () => {
+    const { getByText, getByPlaceholderText } = render(<Login />);
+
+    const usernameInput = getByPlaceholderText("Usuario");
+    const passwordInput = getByPlaceholderText("Contraseña");
+    const loginButton = getByText("Iniciar sesión");
+
+    fireEvent.changeText(usernameInput, "testuser");
+    fireEvent.changeText(passwordInput, "testpass");
+
+    fireEvent.press(loginButton);
+
+    const { authClient } = require("@/services/auth/auth-client");
+    expect(authClient.signIn.email).toHaveBeenCalledWith(
+      {
+        email: "testuser",
+        password: "testpass",
+      },
+      {
+        body: {
+          app: "test-app-id",
+        },
+      },
+    );
   });
 });

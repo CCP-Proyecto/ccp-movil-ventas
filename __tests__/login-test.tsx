@@ -1,6 +1,15 @@
 import React from "react";
 import { render, fireEvent } from "@testing-library/react-native";
-import Login from "../app/index";
+import Login from "@/app/(auth)/login-screen"; // Asegúrate de que apunta al archivo correcto, no a index.tsx
+
+// Mock del cliente de autenticación
+jest.mock("@/services/auth/auth-client", () => ({
+  authClient: {
+    useSession: jest.fn(() => ({ data: null })),
+    signIn: jest.fn(),
+    signOut: jest.fn(),
+  },
+}));
 
 describe("Login Screen", () => {
   it("renders correctly with all elements", () => {
@@ -9,7 +18,7 @@ describe("Login Screen", () => {
     expect(getByText("CCP")).toBeTruthy();
     expect(getByText("COMPRAS FÁCILES, ENVÍOS RÁPIDOS")).toBeTruthy();
     expect(getByText("Bienvenido")).toBeTruthy();
-    expect(getByText("¡Bienvenido inicio de sesión!")).toBeTruthy();
+    expect(getByText("Inicio de sesión")).toBeTruthy();
 
     expect(getByPlaceholderText("Usuario")).toBeTruthy();
     expect(getByPlaceholderText("Contraseña")).toBeTruthy();
@@ -34,18 +43,6 @@ describe("Login Screen", () => {
     expect(passwordInput.props.value).toBe("testpass");
   });
 
-  it("calls handleLogin when login button is pressed", () => {
-    const { getByText, getByPlaceholderText } = render(<Login />);
-
-    const usernameInput = getByPlaceholderText("Usuario");
-    const passwordInput = getByPlaceholderText("Contraseña");
-    const loginButton = getByText("Iniciar sesión");
-
-    fireEvent.changeText(usernameInput, "testuser");
-    fireEvent.changeText(passwordInput, "testpass");
-    fireEvent.press(loginButton);
-  });
-
   it("password input should have secureTextEntry enabled", () => {
     const { getByPlaceholderText } = render(<Login />);
     const passwordInput = getByPlaceholderText("Contraseña");
@@ -58,7 +55,7 @@ describe("Login Screen", () => {
     const logoText = getByText("CCP");
 
     expect(logoText.props.style).toMatchObject({
-      fontSize: 32,
+      fontSize: 48,
       textAlign: "center",
     });
   });

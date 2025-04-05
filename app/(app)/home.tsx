@@ -1,103 +1,49 @@
-// File: app/(app)/home.tsx
-
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
   const router = useRouter();
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.logo}>CCP</Text>
-      <Text style={styles.slogan}>COMPRAS FÁCILES, ENVÍOS RÁPIDOS</Text>
+    <View className="flex-1 items-center justify-center bg-white px-4">
+      {/* Encabezado */}
+      <Text className="text-4xl font-semibold text-blue-700">CCP</Text>
+      <Text className="text-sm text-gray-500">
+        COMPRAS FÁCILES, ENVÍOS RÁPIDOS
+      </Text>
+      <View className="w-20 h-1 bg-gray-700 my-2"></View>
 
-      <View style={styles.cardContainer}>
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => router.push("/(app)/clientes")}
+      {/* Opciones */}
+      <View className="mt-10 space-y-4">
+        <Pressable
+          className="bg-white shadow-md rounded-xl p-5 w-60 items-center"
+          onPress={() => router.push("./clientes")}
         >
-          <Text style={styles.cardText}>Consultar clientes</Text>
-        </TouchableOpacity>
+          <Text className="text-black text-lg">Consultar clientes</Text>
+        </Pressable>
 
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => router.push("/(app)/pedidos")}
+        <Pressable
+          className="bg-white shadow-md rounded-xl p-5 w-60 items-center"
+          onPress={() => router.push("./pedidos")}
         >
-          <Text style={styles.cardText}>Creación de pedidos</Text>
-        </TouchableOpacity>
+          <Text className="text-black text-lg">Creación de pedido</Text>
+        </Pressable>
 
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => router.push("/(app)/recomendacion")}
+        <Pressable
+          className="bg-white shadow-md rounded-xl p-5 w-60 items-center"
+          onPress={() => router.push("./recomendacion")}
         >
-          <Text style={styles.cardText}>Recomendación IA</Text>
-        </TouchableOpacity>
+          <Text className="text-black text-lg">Recomendación IA</Text>
+        </Pressable>
       </View>
 
-      <TouchableOpacity
-        style={styles.backButton}
+      {/* Botón de Volver */}
+      <Pressable
+        className="mt-10 bg-blue-700 px-6 py-2 rounded-full shadow-md"
         onPress={() => router.back()}
       >
-        <Text style={styles.backText}>Volver</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        <Text className="text-white text-lg">Volver</Text>
+      </Pressable>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    paddingTop: 80,
-    alignItems: "center",
-    backgroundColor: "#fff",
-  },
-  logo: {
-    fontSize: 36,
-    fontWeight: "600",
-    color: "#567186",
-  },
-  slogan: {
-    fontSize: 12,
-    color: "#567186",
-    letterSpacing: 1,
-    marginTop: 4,
-    marginBottom: 50,
-  },
-  cardContainer: {
-    gap: 20,
-    alignItems: "center",
-  },
-  card: {
-    backgroundColor: "#fff",
-    width: 220,
-    padding: 20,
-    borderRadius: 12,
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-  },
-  cardText: {
-    fontSize: 16,
-    textAlign: "center",
-    color: "#000",
-  },
-  backButton: {
-    marginTop: 40,
-    paddingVertical: 10,
-    paddingHorizontal: 25,
-    backgroundColor: "#567186",
-    borderRadius: 15,
-  },
-  backText: {
-    color: "#fff",
-    fontSize: 12,
-  },
-});

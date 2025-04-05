@@ -16,8 +16,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.ccpmovilventas",
-      "permissions": ["INTERNET"]
+      "package": "com.anonymous.ccpmovilventas"
     },
     "web": {
       "bundler": "metro",

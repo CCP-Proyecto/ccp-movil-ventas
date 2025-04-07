@@ -7,8 +7,11 @@ import { colors } from "@/theme/colors";
 
 export default function Home() {
   const handleCreateOrders = () => {
-    console.log("Creación de pedidos");
     router.push("/(app)/createOrder");
+  };
+
+  const handleRegisterVisit = () => {
+    router.push("/(app)/registerVisit");
   };
 
   return (
@@ -19,6 +22,12 @@ export default function Home() {
         <HomeButton
           title="Creación de pedidos"
           onPress={handleCreateOrders}
+        />
+      </View>
+      <View style={styles.buttonsContainer}>
+        <HomeButton
+          title="Registrar visitas"
+          onPress={handleRegisterVisit}
         />
       </View>
     </View>
@@ -33,7 +42,6 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   buttonsContainer: {
-    flex: 1,
     width: "100%",
     alignItems: "center",
     marginTop: 30,

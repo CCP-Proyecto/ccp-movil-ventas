@@ -52,6 +52,14 @@ export default function AppLayout() {
           headerShown: true,
         }}
       />
+
+      <Stack.Screen
+        name="registerVisit"
+        options={{
+          headerTitle: "Registro de visitas",
+          headerShown: true,
+        }}
+      />
     </Stack>
   );
 }

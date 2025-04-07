@@ -14,8 +14,11 @@
   },
   "jest": {
     "preset": "jest-expo",
-    "testPathIgnorePatterns": [
-      "/node_modules/"
+    "modulePathIgnorePatterns": [
+      "/node_modules/",
+      "/android",
+      "/coverage",
+      "/.expo"
     ],
     "setupFiles": [
       "<rootDir>/jest.setup.js"
@@ -24,14 +27,20 @@
       "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|better-auth|@better-auth/.*)"
     ],
     "collectCoverageFrom": [
-      "**/*.{js,jsx,ts,tsx}",
-      "!**/node_modules/**"
+      "app/**/*.{js,jsx,ts,tsx}",
+      "components/**/*.{js,jsx,ts,tsx}",
+      "!**/node_modules/**",
+      "!**/coverage/**"
     ]
+  },
+  "engines": {
+    "node": ">=20.9.0"
   },
   "dependencies": {
     "@better-auth/expo": "^1.2.5",
     "@better-fetch/fetch": "1.1.17",
     "@expo/vector-icons": "^14.0.2",
+    "@hookform/resolvers": "^5.0.1",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
     "better-auth": "^1.2.5",
@@ -51,13 +60,17 @@
     "expo-web-browser": "~14.0.2",
     "react": "18.3.1",
     "react-dom": "18.3.1",
+    "react-hook-form": "^7.55.0",
     "react-native": "0.76.7",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-reanimated": "~3.16.1",
     "react-native-safe-area-context": "4.12.0",
     "react-native-screens": "~4.4.0",
+    "react-native-toast-message": "^2.2.1",
     "react-native-web": "~0.19.13",
-    "react-native-webview": "13.12.5"
+    "react-native-webview": "13.12.5",
+    "zod": "^3.24.2",
+    "expo-checkbox": "~4.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

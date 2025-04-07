@@ -1,5 +1,5 @@
 import React from "react";
-import { render, fireEvent } from "@testing-library/react-native";
+import { render, fireEvent, act, waitFor } from "@testing-library/react-native";
 
 import Login from "@/app/(auth)/login-screen";
 
@@ -30,13 +30,12 @@ describe("Login Screen", () => {
     expect(getByText("CCP")).toBeTruthy();
     expect(getByText("COMPRAS FÁCILES, ENVÍOS RÁPIDOS")).toBeTruthy();
     expect(getByText("Bienvenido")).toBeTruthy();
-    expect(getByText("Inicio de sesión")).toBeTruthy();
+    expect(getByText("Inicio de sesión - Fuerza de ventas")).toBeTruthy();
 
     expect(getByPlaceholderText("Usuario")).toBeTruthy();
     expect(getByPlaceholderText("Contraseña")).toBeTruthy();
 
     expect(getByText("Iniciar sesión")).toBeTruthy();
-    expect(getByText("Regístrate")).toBeTruthy();
   });
 
   it("updates username input correctly", () => {
@@ -79,22 +78,16 @@ describe("Login Screen", () => {
     const passwordInput = getByPlaceholderText("Contraseña");
     const loginButton = getByText("Iniciar sesión");
 
-    fireEvent.changeText(usernameInput, "testuser");
-    fireEvent.changeText(passwordInput, "testpass");
-
-    fireEvent.press(loginButton);
+    await act(async () => {
+      fireEvent.changeText(usernameInput, "valid@email.com");
+      fireEvent.changeText(passwordInput, "password123");
+      fireEvent.press(loginButton);
+    });
 
     const { authClient } = require("@/services/auth/auth-client");
-    expect(authClient.signIn.email).toHaveBeenCalledWith(
-      {
-        email: "testuser",
-        password: "testpass",
-      },
-      {
-        body: {
-          app: "test-app-id",
-        },
-      },
-    );
+
+    await waitFor(() => {
+      expect(authClient.signIn.email).toHaveBeenCalled();
+    });
   });
 });

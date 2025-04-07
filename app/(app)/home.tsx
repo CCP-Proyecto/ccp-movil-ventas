@@ -1,49 +1,41 @@
-import { View, Text, Pressable } from "react-native";
-import { useRouter } from "expo-router";
+import React from "react";
+import { View, StyleSheet } from "react-native";
+import { router } from "expo-router";
+import { Logo } from "@/components";
+import { HomeButton } from "@/components";
+import { colors } from "@/theme/colors";
 
-export default function HomeScreen() {
-  const router = useRouter();
+export default function Home() {
+  const handleCreateOrders = () => {
+    console.log("Creación de pedidos");
+    router.push("/(app)/createOrder");
+  };
 
   return (
-    <View className="flex-1 items-center justify-center bg-white px-4">
-      {/* Encabezado */}
-      <Text className="text-4xl font-semibold text-blue-700">CCP</Text>
-      <Text className="text-sm text-gray-500">
-        COMPRAS FÁCILES, ENVÍOS RÁPIDOS
-      </Text>
-      <View className="w-20 h-1 bg-gray-700 my-2"></View>
+    <View style={styles.container}>
+      <Logo />
 
-      {/* Opciones */}
-      <View className="mt-10 space-y-4">
-        <Pressable
-          className="bg-white shadow-md rounded-xl p-5 w-60 items-center"
-          onPress={() => router.push("./clientes")}
-        >
-          <Text className="text-black text-lg">Consultar clientes</Text>
-        </Pressable>
-
-        <Pressable
-          className="bg-white shadow-md rounded-xl p-5 w-60 items-center"
-          onPress={() => router.push("./pedidos")}
-        >
-          <Text className="text-black text-lg">Creación de pedido</Text>
-        </Pressable>
-
-        <Pressable
-          className="bg-white shadow-md rounded-xl p-5 w-60 items-center"
-          onPress={() => router.push("./recomendacion")}
-        >
-          <Text className="text-black text-lg">Recomendación IA</Text>
-        </Pressable>
+      <View style={styles.buttonsContainer}>
+        <HomeButton
+          title="Creación de pedidos"
+          onPress={handleCreateOrders}
+        />
       </View>
-
-      {/* Botón de Volver */}
-      <Pressable
-        className="mt-10 bg-blue-700 px-6 py-2 rounded-full shadow-md"
-        onPress={() => router.back()}
-      >
-        <Text className="text-white text-lg">Volver</Text>
-      </Pressable>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.white,
+    alignItems: "center",
+    paddingTop: 20,
+  },
+  buttonsContainer: {
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
+    marginTop: 30,
+  },
+});

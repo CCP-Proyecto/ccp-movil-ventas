@@ -41,11 +41,13 @@
     "@better-fetch/fetch": "1.1.17",
     "@expo/vector-icons": "^14.0.2",
     "@hookform/resolvers": "^5.0.1",
+    "@react-native-community/datetimepicker": "8.2.0",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
     "better-auth": "^1.2.5",
     "expo": "~52.0.41",
     "expo-blur": "~14.0.3",
+    "expo-checkbox": "~4.0.1",
     "expo-constants": "~17.0.8",
     "expo-dev-client": "~5.0.19",
     "expo-font": "~13.0.4",
@@ -69,9 +71,7 @@
     "react-native-toast-message": "^2.2.1",
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.5",
-    "zod": "^3.24.2",
-    "expo-checkbox": "~4.0.1",
-    "@react-native-community/datetimepicker": "8.2.0"
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

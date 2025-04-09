@@ -70,7 +70,7 @@ adb install -r android/app/build/outputs/apk/release/app-release.apk
 
 # Si se está usando el APK descargado del release de GitHub:
 adb install -r ruta/al/archivo/descargado/app-release.apk
-
+```
 ## Testing
 
 ### Configuración de Jest

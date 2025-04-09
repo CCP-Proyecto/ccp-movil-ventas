@@ -10,6 +10,6 @@ export const CLOUD_ENDPOINTS = {
 };
 
 export const APP_CONFIG = {
-  APP_NAME: "CCP Customer",
-  APP_ID: "ccp-customer",
+  APP_NAME: "CCP Sales",
+  APP_ID: "ccp-sales",
 };

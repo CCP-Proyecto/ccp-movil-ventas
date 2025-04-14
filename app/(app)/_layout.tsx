@@ -60,6 +60,38 @@ export default function AppLayout() {
           headerShown: true,
         }}
       />
+
+      <Stack.Screen
+        name="getVisits"
+        options={{
+          headerTitle: "Consulta de visitas",
+          headerShown: true,
+        }}
+      />
+
+      <Stack.Screen
+        name="getDeliveries"
+        options={{
+          headerTitle: "Consulta de entregas",
+          headerShown: true,
+        }}
+      />
+
+      <Stack.Screen
+        name="getClients"
+        options={{
+          headerTitle: "Consulta de clientes",
+          headerShown: true,
+        }}
+      />
+
+      <Stack.Screen
+        name="recomendations"
+        options={{
+          headerTitle: "Recomendaciones",
+          headerShown: true,
+        }}
+      />
     </Stack>
   );
 }

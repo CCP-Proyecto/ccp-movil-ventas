@@ -1,7 +1,7 @@
 import React from "react";
 import { render, fireEvent, act, waitFor } from "@testing-library/react-native";
 
-import Login from "@/app/(auth)/login-screen";
+import Login from "@/app/(app)/getVisits";
 
 // Mock del cliente de autenticación
 jest.mock("@/services/auth/auth-client", () => ({

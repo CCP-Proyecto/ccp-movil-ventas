@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, SafeAreaView, ScrollView } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Logo } from "@/components";
 
 const estados = [
   {
@@ -28,16 +29,8 @@ export default function EstadoEntregaScreen() {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         {/* Header */}
-        <View style={styles.header}>
-          <Ionicons
-            name="arrow-back"
-            size={24}
-            color="#000"
-            style={styles.backIcon}
-          />
-          <Text style={styles.logo}>CCP</Text>
-        </View>
-        <Text style={styles.subLogo}>COMPRAS FÁCILES, ENVÍOS RÁPIDOS</Text>
+
+        <Logo />
 
         {/* Título */}
         <Text style={styles.title}>Entregas</Text>
@@ -51,9 +44,7 @@ export default function EstadoEntregaScreen() {
               size={24}
               color="#fff"
             />
-            <Text style={styles.trackingNumber}>
-              Número de guía AMZPSR014652567
-            </Text>
+            <Text style={styles.trackingNumber}>Número de guía R014652567</Text>
           </View>
 
           {/* Estados */}
@@ -123,6 +114,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#000",
     alignSelf: "flex-start",
+    marginTop: 20,
   },
   subtitle: {
     color: "#4a6c8a",

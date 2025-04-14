@@ -41,7 +41,7 @@ const visitasIniciales: Visita[] = [
 ];
 
 const ConsultaVisitasScreen = () => {
-  const [visitas, setVisitas] = useState<Visita[]>(visitasIniciales);
+  const [visitas] = useState<Visita[]>(visitasIniciales);
 
   const renderItem = ({ item }: { item: Visita }) => {
     const direccionCompleta =

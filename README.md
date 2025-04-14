@@ -71,6 +71,27 @@ adb install -r android/app/build/outputs/apk/release/app-release.apk
 # Si se está usando el APK descargado del release de GitHub:
 adb install -r ruta/al/archivo/descargado/app-release.apk
 ```
+## Plan de versionado para MVP
+
+El proyecto sigue una estrategia de versionado semántico adaptada al ciclo de desarrollo del MVP (MAYOR.MENOR.PARCHE):
+
+- **MAYOR**: Cambios incompatibles con versiones anteriores (0 durante el MVP)
+- **MENOR**: Incrementa con cada sprint completado
+- **PARCHE**: Incrementa con correcciones o mejoras menores entre sprints
+
+| Etapa        | Versión | Descripción                                     |
+|--------------|---------|------------------------------------------------|
+| Sprint 1     | 0.1.x   | Primera iteración con funcionalidades básicas   |
+| Sprint 2     | 0.2.x   | Segunda iteración (actual)                      |
+| Sprint 3     | 0.3.x   | Tercera iteración con funcionalidad completa    |
+| MVP Release  | 1.0.0   | Versión final del MVP para producción           |
+
+### Notas de versionado
+
+- Las versiones anteriores a 1.0.0 son consideradas en fase de desarrollo
+- La versión actual de la aplicación se muestra en la pantalla de inicio de sesión
+- Los números de parche (x) se incrementan con cada corrección de errores
+
 ## Testing
 
 ### Configuración de Jest

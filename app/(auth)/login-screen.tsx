@@ -1,108 +1,222 @@
 import React, { useState } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  SafeAreaView,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
+import { router } from "expo-router";
+import Toast from "react-native-toast-message";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
-type Visita = {
-  cliente: string;
-  direccion: string;
-  ciudad: string;
-  vendedor: string;
-  fecha: string;
-};
+import { authClient } from "@/services/auth/auth-client";
+import { APP_CONFIG } from "@/constants";
+import { Logo, Button, Input } from "@/components";
+import { colors } from "@/theme/colors";
 
-const visitasIniciales: Visita[] = [
-  {
-    cliente: "Supermercado La 14",
-    direccion: "Calle 10 #23-15",
-    ciudad: "Bogotá",
-    vendedor: "Carlos Ruiz",
-    fecha: "2025-04-10",
-  },
-  {
-    cliente: "Tienda Don Juan",
-    direccion: "Carrera 15 #45-20",
-    ciudad: "Medellín",
-    vendedor: "Laura Torres",
-    fecha: "2025-04-11",
-  },
-  {
-    cliente: "Minimarket El Éxito",
-    direccion: "Av. Siempre Viva 123",
-    ciudad: "Cali",
-    vendedor: "Andrés Mejía",
-    fecha: "2025-04-12",
-  },
-  {
-    cliente: "Cliente sin dirección",
-    direccion: "",
-    ciudad: "Barranquilla",
-    vendedor: "María López",
-    fecha: "2025-04-13",
-  },
-];
+const APP_VERSION = "0.2.1";
 
-const ConsultaVisitasScreen = () => {
-  const [visitas, setVisitas] = useState<Visita[]>(visitasIniciales);
+const loginSchema = z.object({
+  email: z.string().email("Email inválido"),
+  password: z.string().min(6, "Contraseña es requerida"),
+});
 
-  const renderItem = ({ item }: { item: Visita }) => {
-    const direccionCompleta =
-      item.direccion && item.ciudad
-        ? `${item.direccion}, ${item.ciudad}`
-        : item.direccion || item.ciudad || "Sin dirección";
+type LoginFormValues = z.infer<typeof loginSchema>;
 
-    return (
-      <View style={styles.card}>
-        <Text style={styles.title}>{item.cliente}</Text>
-        <Text style={styles.text}>📍 {direccionCompleta}</Text>
-        <Text style={styles.text}>📅 Fecha de visita: {item.fecha}</Text>
-        <Text style={styles.text}>👤 Visitado por: {item.vendedor}</Text>
-      </View>
-    );
+export default function Login() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = async (data: LoginFormValues) => {
+    setIsLoading(true);
+
+    try {
+      const { error, data: responseData } = await authClient.signIn.email(
+        {
+          email: data.email,
+          password: data.password,
+        },
+        {
+          body: {
+            app: APP_CONFIG.APP_ID,
+          },
+        },
+      );
+
+      if (responseData) {
+        Toast.show({
+          type: "success",
+          text1: "Inicio de sesión exitoso",
+          text2: "Bienvenido de vuelta",
+          visibilityTime: 2000,
+          onHide: () => {
+            router.replace("/(app)/home");
+          },
+        });
+        return;
+      }
+
+      if (error) {
+        setIsLoading(false);
+        Toast.show({
+          type: "error",
+          text1: "Error de inicio de sesión",
+          text2: error.message || "Por favor, verifica tus credenciales",
+        });
+      }
+    } catch (e) {
+      setIsLoading(false);
+      console.error("Error al conectar con el servidor:", e);
+      Toast.show({
+        type: "error",
+        text1: "Error de conexión",
+        text2: "No se pudo conectar con el servidor",
+      });
+    }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Historial de Visitas</Text>
-      <FlatList
-        data={visitas}
-        keyExtractor={(item, index) => `${item.cliente}-${index}`}
-        renderItem={renderItem}
-        contentContainerStyle={{ paddingBottom: 20 }}
-      />
-    </View>
-  );
-};
+    <SafeAreaView style={styles.container}>
+      {isLoading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator
+            size="large"
+            color={colors.primary}
+          />
+        </View>
+      )}
 
-export default ConsultaVisitasScreen;
+      <View style={styles.logoContainer}>
+        <Logo />
+      </View>
+
+      <View style={styles.centeredContent}>
+        <View style={styles.welcomeSection}>
+          <Text style={styles.title}>Bienvenido</Text>
+          <Text style={styles.welcomeText}>
+            Inicio de sesión - Fuerza de ventas
+          </Text>
+        </View>
+
+        <View style={styles.form}>
+          <Controller
+            control={control}
+            name="email"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                placeholder="Usuario"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                error={errors.email?.message}
+              />
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="password"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                placeholder="Contraseña"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                error={errors.password?.message}
+                secureTextEntry
+              />
+            )}
+          />
+
+          <Button
+            onPress={handleSubmit(onSubmit)}
+            title="Iniciar sesión"
+          />
+        </View>
+      </View>
+
+      {/* Añadir el texto de versión */}
+      <View style={styles.versionContainer}>
+        <Text style={styles.versionText}>Versión {APP_VERSION}</Text>
+      </View>
+    </SafeAreaView>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    paddingTop: 60,
-    paddingHorizontal: 20,
+    backgroundColor: colors.white,
+    alignItems: "center",
   },
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
+  logoContainer: {
+    width: "100%",
+    alignItems: "center",
+    paddingTop: 30,
+  },
+  centeredContent: {
+    flex: 1,
+    justifyContent: "center",
+    width: "100%",
+    maxWidth: 350,
+    paddingBottom: 50,
+  },
+  welcomeSection: {
+    width: "100%",
     marginBottom: 20,
-  },
-  card: {
-    backgroundColor: "#F2F6FA",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 3,
+    alignItems: "flex-start",
   },
   title: {
-    fontSize: 18,
-    fontWeight: "bold",
+    fontFamily: "Comfortaa-SemiBold",
+    fontSize: 24,
+    marginBottom: 5,
+    color: colors.black,
   },
-  text: {
-    fontSize: 14,
-    marginTop: 4,
+  welcomeText: {
+    fontFamily: "Comfortaa-Regular",
+    color: colors.black,
+  },
+  form: {
+    width: "100%",
+    marginTop: 20,
+    gap: 15,
+    alignItems: "center",
+  },
+  loadingOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1000,
+  },
+  versionContainer: {
+    position: "absolute",
+    bottom: 20,
+    width: "100%",
+    alignItems: "center",
+  },
+  versionText: {
+    fontFamily: "Comfortaa-Regular",
+    fontSize: 12,
+    color: colors.secondary,
+    opacity: 0.7,
   },
 });

@@ -30,7 +30,7 @@ const clientesIniciales: Cliente[] = [
 ];
 
 const ConsultaClientesScreen = () => {
-  const [clientes, setClientes] = useState<Cliente[]>(clientesIniciales);
+  const [clientes] = useState<Cliente[]>(clientesIniciales);
 
   const renderItem = ({ item }: { item: Cliente }) => (
     <View style={styles.card}>

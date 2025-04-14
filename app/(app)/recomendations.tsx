@@ -1,3 +1,4 @@
+import { Logo } from "@/components";
 import React from "react";
 import {
   View,
@@ -27,8 +28,8 @@ const SuggestedProductsScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.logo}>CCP</Text>
-      <Text style={styles.tagline}>COMPRAS FÁCILES, ENVÍOS RÁPIDOS</Text>
+      <Logo />
+
       <Text style={styles.title}>Recomendaciones para tu cliente:</Text>
       <Text style={styles.subtitle}>
         Estas sugerencias se basan en su ubicación y temporada actual.
@@ -79,6 +80,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textAlign: "center",
     marginBottom: 8,
+    marginTop: 20,
   },
   subtitle: {
     fontSize: 14,

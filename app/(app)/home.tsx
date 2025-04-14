@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: 20,
     paddingHorizontal: 16,
-    paddingBottom: 20, // Añadir padding en la parte inferior
+    paddingBottom: 20,
   },
   sectionContainer: {
     width: "100%",

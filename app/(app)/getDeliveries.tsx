@@ -28,15 +28,11 @@ export default function EstadoEntregaScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        {/* Header */}
-
         <Logo />
 
-        {/* Título */}
         <Text style={styles.title}>Entregas</Text>
         <Text style={styles.subtitle}>Este es el estado de tu entrega</Text>
 
-        {/* Contenedor Principal */}
         <View style={styles.cardContainer}>
           <View style={styles.trackingHeader}>
             <MaterialCommunityIcons
@@ -47,7 +43,6 @@ export default function EstadoEntregaScreen() {
             <Text style={styles.trackingNumber}>Número de guía R014652567</Text>
           </View>
 
-          {/* Estados */}
           {estados.map((item, index) => (
             <View
               key={index}

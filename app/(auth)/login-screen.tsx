@@ -149,7 +149,6 @@ export default function Login() {
         </View>
       </View>
 
-      {/* Añadir el texto de versión */}
       <View style={styles.versionContainer}>
         <Text style={styles.versionText}>Versión {APP_VERSION}</Text>
       </View>

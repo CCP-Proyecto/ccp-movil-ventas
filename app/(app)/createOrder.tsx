@@ -50,7 +50,6 @@ export default function CreateOrder() {
   const [isLoading, setIsLoading] = useState(false);
   const [wasOrderSent, setWasOrderSent] = useState(false);
 
-  // Estados para la fecha de entrega
   const [deliveryDate, setDeliveryDate] = useState<Date | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -157,7 +156,7 @@ export default function CreateOrder() {
           subtotal: product.price * quantities[product.id],
         })),
         total: totalOrderValue,
-        deliveryDate: deliveryDate.toISOString(), // Añadir la fecha de entrega
+        deliveryDate: deliveryDate.toISOString(),
       };
 
       console.log("Enviando orden:", JSON.stringify(orderData, null, 2));

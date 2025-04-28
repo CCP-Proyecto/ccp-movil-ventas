@@ -17,7 +17,7 @@ import { APP_CONFIG } from "@/constants";
 import { Logo, Button, Input } from "@/components";
 import { colors } from "@/theme/colors";
 
-const APP_VERSION = "0.2.1";
+const APP_VERSION = APP_CONFIG.APP_VERSION;
 
 const loginSchema = z.object({
   email: z.string().email("Email inválido"),

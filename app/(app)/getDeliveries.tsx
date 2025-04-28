@@ -5,18 +5,6 @@ import { Logo } from "@/components";
 
 const estados = [
   {
-    estado: "ENTREGADO",
-    descripcion: "Envío entregado en perfectas condiciones",
-    ciudad: "Bogota",
-    fecha: "06/03/2025",
-  },
-  {
-    estado: "EN DISTRIBUCIÓN",
-    descripcion: "Paquete en distribución",
-    ciudad: "Bogota",
-    fecha: "06/03/2025",
-  },
-  {
     estado: "EN BODEGA",
     descripcion: "Paquete en Bodega",
     ciudad: "Bogota",
@@ -40,7 +28,9 @@ export default function EstadoEntregaScreen() {
               size={24}
               color="#fff"
             />
-            <Text style={styles.trackingNumber}>Número de guía R014652567</Text>
+            <Text style={styles.trackingNumber}>
+              Número de pedido R014652567
+            </Text>
           </View>
 
           {estados.map((item, index) => (

@@ -7,7 +7,7 @@ class ApiClient {
   createAuthenticatedFetch() {
     const cookies = authClient.getCookie();
     return createFetch({
-      baseURL: CLOUD_ENDPOINTS.API_MS,
+      baseURL: CLOUD_ENDPOINTS.API_MS_DEV,
       headers: {
         "Content-Type": "application/json",
         Cookie: cookies || "",

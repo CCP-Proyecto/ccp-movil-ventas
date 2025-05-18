@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 import React, { useState } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 
@@ -44,7 +45,7 @@ const ConsultaClientesScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Clientes Registrados</Text>
+      <Text style={styles.header}>{t("clients.screenTitle")}</Text>
       <FlatList
         data={clientes}
         keyExtractor={(item, index) => index.toString()}

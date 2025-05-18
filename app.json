@@ -46,7 +46,9 @@
             "./assets/fonts/Comfortaa-Bold.ttf"
           ]
         }
-      ]
+      ],
+      "expo-localization",
+      "expo-camera"
     ],
     "experiments": {
       "typedRoutes": true

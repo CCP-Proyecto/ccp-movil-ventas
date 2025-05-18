@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 import React, { useState } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 
@@ -5,7 +6,6 @@ type Visita = {
   cliente: string;
   direccion: string;
   ciudad: string;
-  vendedor: string;
   fecha: string;
 };
 
@@ -14,28 +14,24 @@ const visitasIniciales: Visita[] = [
     cliente: "Supermercado La 14",
     direccion: "Calle 10 #23-15",
     ciudad: "Bogotá",
-    vendedor: "Carlos Ruiz",
     fecha: "2025-04-10",
   },
   {
     cliente: "Tienda Don Juan",
     direccion: "Carrera 15 #45-20",
     ciudad: "Medellín",
-    vendedor: "Laura Torres",
     fecha: "2025-04-11",
   },
   {
     cliente: "Minimarket El Éxito",
     direccion: "Av. Siempre Viva 123",
     ciudad: "Cali",
-    vendedor: "Andrés Mejía",
     fecha: "2025-04-12",
   },
   {
     cliente: "Cliente sin dirección",
     direccion: "",
     ciudad: "Barranquilla",
-    vendedor: "María López",
     fecha: "2025-04-13",
   },
 ];
@@ -53,15 +49,16 @@ const ConsultaVisitasScreen = () => {
       <View style={styles.card}>
         <Text style={styles.title}>{item.cliente}</Text>
         <Text style={styles.text}>📍 {direccionCompleta}</Text>
-        <Text style={styles.text}>📅 Fecha de visita: {item.fecha}</Text>
-        <Text style={styles.text}>👤 Visitado por: {item.vendedor}</Text>
+        <Text style={styles.text}>
+          📅 {t("visits.visitDate")}: {item.fecha}
+        </Text>
       </View>
     );
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Historial de Visitas</Text>
+      <Text style={styles.header}>{t("visits.visitsHistory")}</Text>
       <FlatList
         data={visitas}
         keyExtractor={(item, index) => `${item.cliente}-${index}`}

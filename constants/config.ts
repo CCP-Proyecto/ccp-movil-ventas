@@ -7,6 +7,7 @@ export const DEV_URLS = {
 export const CLOUD_ENDPOINTS = {
   USERS_MS: "https://ccp-user-management-359954554145.us-east1.run.app",
   API_MS: "https://ccp-api-359954554145.us-east1.run.app",
+  API_MS_DEV: "https://ccp-api-local-359954554145.us-east1.run.app",
 };
 
 export const APP_CONFIG = {

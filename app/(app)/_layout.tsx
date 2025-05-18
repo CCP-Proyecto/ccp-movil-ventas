@@ -4,6 +4,7 @@ import { authClient } from "@/services/auth/auth-client";
 import { Redirect } from "expo-router";
 import { colors } from "@/theme/colors";
 import { LogoutButton } from "@/components";
+import { t } from "@/i18n";
 
 export default function AppLayout() {
   const { data: session } = authClient.useSession();
@@ -39,7 +40,7 @@ export default function AppLayout() {
       <Stack.Screen
         name="home"
         options={{
-          headerTitle: `Bienvenido, ${session?.user?.name}`,
+          headerTitle: `${t("common.welcome")}, ${session?.user?.name}`,
           headerShown: true,
           headerBackVisible: false,
         }}
@@ -48,7 +49,7 @@ export default function AppLayout() {
       <Stack.Screen
         name="createOrder"
         options={{
-          headerTitle: "Creación de pedidos",
+          headerTitle: `${t("menu.createButton")}`,
           headerShown: true,
         }}
       />
@@ -56,7 +57,7 @@ export default function AppLayout() {
       <Stack.Screen
         name="registerVisit"
         options={{
-          headerTitle: "Registro de visitas",
+          headerTitle: `${t("menu.registerVisitButton")}`,
           headerShown: true,
         }}
       />
@@ -64,7 +65,7 @@ export default function AppLayout() {
       <Stack.Screen
         name="getVisits"
         options={{
-          headerTitle: "Consulta de visitas",
+          headerTitle: `${t("menu.getVisitsButton")}`,
           headerShown: true,
         }}
       />
@@ -72,7 +73,7 @@ export default function AppLayout() {
       <Stack.Screen
         name="getDeliveries"
         options={{
-          headerTitle: "Consulta de entregas",
+          headerTitle: `${t("menu.getDeliveriesButton")}`,
           headerShown: true,
         }}
       />
@@ -80,7 +81,7 @@ export default function AppLayout() {
       <Stack.Screen
         name="getClients"
         options={{
-          headerTitle: "Consulta de clientes",
+          headerTitle: `${t("menu.getClientsButton")}`,
           headerShown: true,
         }}
       />
@@ -88,7 +89,7 @@ export default function AppLayout() {
       <Stack.Screen
         name="recomendations"
         options={{
-          headerTitle: "Recomendaciones",
+          headerTitle: `${t("menu.recommendationsButton")}`,
           headerShown: true,
         }}
       />

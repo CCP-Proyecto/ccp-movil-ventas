@@ -8,10 +8,11 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
-import { fetchClient } from "@/services";
+import { authClient, fetchClient } from "@/services";
 import { Logo, Button } from "@/components";
 import { NumberPicker } from "@/components";
 import { colors } from "@/theme/colors";
+import { t } from "@/i18n";
 
 interface Product {
   id: number;
@@ -23,29 +24,14 @@ interface Product {
   manufacturerId?: string;
 }
 
-// Datos mock
-const productsMock: Product[] = [
-  { id: 1, name: "Azúcar", price: 2500, description: "Bolsa x 500g" },
-  { id: 2, name: "Sal", price: 1800, description: "Bolsa x 1kg" },
-  { id: 3, name: "Café", price: 12000, description: "Premium x 500g" },
-  { id: 4, name: "Chocolate", price: 8500, description: "Tableta x 250g" },
-  { id: 5, name: "Agua en botella", price: 2200, description: "600ml" },
-  { id: 6, name: "Jugo en caja", price: 3500, description: "1L" },
-  { id: 7, name: "Vino", price: 35000, description: "Botella 750ml" },
-  {
-    id: 8,
-    name: "Galletas",
-    price: 4200,
-    description: "Paquete x 12 unidades",
-  },
-];
-
 export default function CreateOrder() {
-  const [products, setProducts] = useState<Product[]>(productsMock);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState<boolean>(true);
   const [quantities, setQuantities] = useState<Record<number, number>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [wasOrderSent, setWasOrderSent] = useState(false);
+
+  const customerId = authClient.useSession().data?.user?.userId?.toString();
 
   const totalOrderValue = useMemo(() => {
     return products.reduce((total, product) => {
@@ -69,8 +55,7 @@ export default function CreateOrder() {
   const fetchProducts = async () => {
     setLoadingProducts(true);
     try {
-      const { data, error } = await fetchClient.get("/api/product");
-      console.log("Products response:", data, "Error:", error);
+      const { data } = await fetchClient.get("/api/product");
 
       if (data && Array.isArray(data) && data.length > 0) {
         const validatedProducts = data.map((product) => ({
@@ -79,12 +64,22 @@ export default function CreateOrder() {
         }));
         setProducts(validatedProducts);
       } else {
-        console.log("Using mock products as fallback");
-        setProducts(productsMock);
+        console.log("No products found or error fetching products.");
+        setProducts([]);
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "No se pudieron cargar los productos.",
+        });
       }
     } catch (error) {
       console.error("Error fetching products:", error);
-      setProducts(productsMock);
+      setProducts([]);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Ocurrió un error al cargar los productos.",
+      });
     } finally {
       setLoadingProducts(false);
     }
@@ -97,21 +92,21 @@ export default function CreateOrder() {
   const handleIncrement = (id: number) => {
     setQuantities((prev) => ({
       ...prev,
-      [id]: prev[id] + 1,
+      [id]: (prev[id] || 0) + 1,
     }));
   };
 
   const handleDecrement = (id: number) => {
     setQuantities((prev) => ({
       ...prev,
-      [id]: Math.max(prev[id] - 1, 0), // Evitar valores negativos
+      [id]: Math.max((prev[id] || 0) - 1, 0),
     }));
   };
 
   const handleValueChange = (id: number, newValue: number) => {
     setQuantities((prev) => ({
       ...prev,
-      [id]: newValue,
+      [id]: Math.max(newValue, 0),
     }));
   };
 
@@ -129,10 +124,18 @@ export default function CreateOrder() {
       return;
     }
 
+    if (!customerId) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2:
+          "No se pudo identificar al cliente. Intenta iniciar sesión de nuevo.",
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const customerId = "";
-
       const orderData = {
         customerId: customerId,
         products: selectedProducts.map((product) => ({
@@ -143,26 +146,7 @@ export default function CreateOrder() {
 
       console.log("Enviando orden:", JSON.stringify(orderData, null, 2));
 
-      const usingMockProducts = selectedProducts.every((product) =>
-        productsMock.some((mock) => mock.id === product.id),
-      );
-
-      let orderResult;
-
-      if (usingMockProducts) {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        orderResult = {
-          data: {
-            id: Math.floor(Math.random() * 10000),
-            status: "created",
-            total: totalOrderValue,
-          },
-          error: null,
-        };
-      } else {
-        orderResult = await fetchClient.post("/api/order", orderData);
-      }
+      const orderResult = await fetchClient.post("/api/order", orderData);
 
       if (orderResult.error) {
         throw new Error(
@@ -174,9 +158,7 @@ export default function CreateOrder() {
       Toast.show({
         type: "success",
         text1: "Pedido realizado",
-        text2: usingMockProducts
-          ? `Pedido por $${totalOrderValue.toLocaleString()} creado correctamente`
-          : `Tu pedido por $${totalOrderValue.toLocaleString()} ha sido enviado correctamente`,
+        text2: `Tu pedido por ${formatCurrency(totalOrderValue)} ha sido enviado correctamente`,
         onHide: () => {
           router.replace("/(app)/home");
         },
@@ -194,7 +176,6 @@ export default function CreateOrder() {
     }
   };
 
-  // Función para formatear precios en formato de moneda colombiana
   const formatCurrency = (value: number) => {
     return `$${value.toLocaleString("es-CO")}`;
   };
@@ -206,8 +187,8 @@ export default function CreateOrder() {
       </View>
 
       <View style={styles.contentContainer}>
-        <Text style={styles.title}>Creación de pedidos</Text>
-        <Text style={styles.subtitle}>Selecciona la cantidad de productos</Text>
+        <Text style={styles.title}>{t("createOrder.screenTitle")}</Text>
+        <Text style={styles.subtitle}>{t("createOrder.subTitle")}</Text>
 
         {loadingProducts ? (
           <ActivityIndicator
@@ -215,6 +196,10 @@ export default function CreateOrder() {
             color={colors.primary}
             style={styles.loader}
           />
+        ) : products.length === 0 ? (
+          <Text style={styles.noProductsText}>
+            {t("createOrder.noProducts")}
+          </Text>
         ) : (
           <ScrollView contentContainerStyle={styles.productsContainer}>
             {products.map((product) => {
@@ -256,10 +241,9 @@ export default function CreateOrder() {
           </ScrollView>
         )}
 
-        {/* Total del pedido */}
-        {!loadingProducts && (
+        {!loadingProducts && products.length > 0 && (
           <View style={styles.totalContainer}>
-            <Text style={styles.totalLabel}>Total del pedido:</Text>
+            <Text style={styles.totalLabel}>{t("createOrder.totalLabel")}</Text>
             <Text style={styles.totalValue}>
               {formatCurrency(totalOrderValue)}
             </Text>
@@ -267,14 +251,15 @@ export default function CreateOrder() {
         )}
 
         <Button
-          title={isLoading ? "Enviando..." : "Realizar pedido"}
+          title={isLoading ? "Enviando..." : `${t("createOrder.button")}`}
           onPress={handleSubmit}
           style={styles.submitButton}
           disabled={
             wasOrderSent ||
             isLoading ||
             loadingProducts ||
-            totalOrderValue === 0
+            totalOrderValue === 0 ||
+            products.length === 0
           }
         />
         {isLoading && (
@@ -296,7 +281,8 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: "center",
-    marginBottom: 25,
+    marginTop: 20,
+    marginBottom: 15,
   },
   contentContainer: {
     flex: 1,
@@ -317,22 +303,23 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   productsContainer: {
-    paddingVertical: 20,
+    paddingBottom: 20,
   },
   productRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 15,
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: colors.gray || "#eee",
   },
   productInfo: {
     flex: 1,
+    marginRight: 10,
   },
   productName: {
-    fontFamily: "Comfortaa-Regular",
+    fontFamily: "Comfortaa-Bold",
     fontSize: 16,
     color: colors.black,
   },
@@ -382,5 +369,12 @@ const styles = StyleSheet.create({
   loader: {
     marginTop: 20,
     alignSelf: "center",
+  },
+  noProductsText: {
+    textAlign: "center",
+    marginTop: 50,
+    fontSize: 16,
+    color: colors.secondary,
+    fontFamily: "Comfortaa-Regular",
   },
 });

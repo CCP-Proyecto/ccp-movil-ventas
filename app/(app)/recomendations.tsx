@@ -1,134 +1,160 @@
-import { Logo } from "@/components";
-import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Image,
-  TouchableOpacity,
-} from "react-native";
+import { Button } from "@/components";
+import { t } from "@/i18n";
+import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
+import { useState } from "react";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
-const SuggestedProductsScreen = () => {
-  // Simulación de productos sugeridos
-  const suggestedProducts = [
-    {
-      id: 1,
-      name: "Sombrilla UV Pro",
-      description: "Protección solar ideal para zonas calurosas.",
-      image: "https://via.placeholder.com/100",
-    },
-    {
-      id: 2,
-      name: "Chaqueta térmica",
-      description: "Perfecta para regiones frías o temporadas de lluvia.",
-      image: "https://via.placeholder.com/100",
-    },
-  ];
+export default function App() {
+  const [facing, setFacing] = useState<CameraType>("back");
+  const [permission, requestPermission] = useCameraPermissions();
+  const [isRecording, setIsRecording] = useState(false);
+
+  if (!permission) {
+    // Camera permissions are still loading.
+    return <View />;
+  }
+
+  if (!permission.granted) {
+    return (
+      <View style={styles.permissionContainer}>
+        <View style={styles.permissionCard}>
+          <Text style={styles.permissionTitle}>
+            {t("recommendations.permissions.title")}
+          </Text>
+          <Text style={styles.permissionMessage}>
+            {t("recommendations.permissions.text")}
+          </Text>
+          <Button
+            title={t("recommendations.permissions.button")}
+            onPress={requestPermission}
+          />
+        </View>
+      </View>
+    );
+  }
+
+  function toggleCameraFacing() {
+    setFacing((current) => (current === "back" ? "front" : "back"));
+  }
+
+  const toggleRecording = () => {
+    setIsRecording(!isRecording);
+  };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Logo />
+    <View style={styles.container}>
+      <CameraView
+        style={styles.camera}
+        facing={facing}
+      >
+        <View style={styles.controlsContainer}>
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={toggleCameraFacing}
+          >
+            <Ionicons
+              name="camera-reverse"
+              size={28}
+              color="white"
+            />
+          </TouchableOpacity>
 
-      <Text style={styles.title}>Recomendaciones para tu cliente:</Text>
-      <Text style={styles.subtitle}>
-        Estas sugerencias se basan en su ubicación y temporada actual.
-      </Text>
-
-      {suggestedProducts.map((product) => (
-        <View
-          key={product.id}
-          style={styles.card}
-        >
-          <Image
-            source={{ uri: product.image }}
-            style={styles.image}
-          />
-          <View style={styles.info}>
-            <Text style={styles.productName}>{product.name}</Text>
-            <Text style={styles.productDesc}>{product.description}</Text>
-            <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>Ver más</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            style={[styles.recordButton, isRecording && styles.recordingButton]}
+            onPress={toggleRecording}
+          >
+            {isRecording ? (
+              <View style={styles.stopRecordingIcon} />
+            ) : (
+              <View style={styles.startRecordingIcon} />
+            )}
+          </TouchableOpacity>
         </View>
-      ))}
-    </ScrollView>
+      </CameraView>
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: "#fff",
-  },
-  logo: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#50688C",
-    marginTop: 16,
-  },
-  tagline: {
-    fontSize: 12,
-    color: "#888",
-    marginBottom: 20,
-    letterSpacing: 1,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "600",
-    textAlign: "center",
-    marginBottom: 8,
-    marginTop: 20,
-  },
-  subtitle: {
-    fontSize: 14,
-    textAlign: "center",
-    marginBottom: 20,
-    color: "#333",
-    paddingHorizontal: 10,
-  },
-  card: {
-    flexDirection: "row",
-    backgroundColor: "#F4F4F4",
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
-    width: "100%",
-  },
-  image: {
-    width: 80,
-    height: 80,
-    borderRadius: 8,
-    marginRight: 12,
-  },
-  info: {
     flex: 1,
-    justifyContent: "space-between",
+    justifyContent: "center",
   },
-  productName: {
-    fontSize: 16,
-    fontWeight: "600",
+  camera: {
+    flex: 1,
+  },
+  controlsContainer: {
+    position: "absolute",
+    bottom: 40,
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  iconButton: {
+    padding: 15,
+    borderRadius: 50,
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    marginRight: 30,
+  },
+  recordButton: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 4,
+    borderColor: "rgba(255, 255, 255, 0.5)",
+  },
+  recordingButton: {
+    backgroundColor: "#ff4136",
+  },
+  startRecordingIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#ff4136",
+  },
+  stopRecordingIcon: {
+    width: 22,
+    height: 22,
+    backgroundColor: "white",
+    borderRadius: 3,
+  },
+  permissionContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f5f5f5",
+    padding: 20,
+  },
+  permissionCard: {
+    backgroundColor: "white",
+    borderRadius: 15,
+    padding: 24,
+    width: "100%",
+    maxWidth: 400,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+    alignItems: "center",
+  },
+  permissionTitle: {
+    fontSize: 22,
+    fontWeight: "700",
     color: "#333",
+    marginBottom: 12,
+    textAlign: "center",
   },
-  productDesc: {
-    fontSize: 13,
-    color: "#555",
-    marginVertical: 6,
-  },
-  button: {
-    backgroundColor: "#50688C",
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-    alignSelf: "flex-start",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "600",
+  permissionMessage: {
+    fontSize: 16,
+    color: "#666",
+    textAlign: "center",
+    marginBottom: 24,
+    lineHeight: 22,
   },
 });
-
-export default SuggestedProductsScreen;

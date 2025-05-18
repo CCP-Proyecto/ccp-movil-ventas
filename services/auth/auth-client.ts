@@ -15,6 +15,9 @@ export const authClient = createAuthClient({
     }),
     inferAdditionalFields({
       user: {
+        userId: {
+          type: "string",
+        },
         roles: {
           type: "string[]",
         },

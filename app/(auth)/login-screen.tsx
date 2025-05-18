@@ -6,22 +6,22 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from "react-native";
-import { router } from "expo-router";
 import Toast from "react-native-toast-message";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-import { authClient } from "@/services/auth/auth-client";
+import { authClient } from "@/services";
 import { APP_CONFIG } from "@/constants";
+import { t } from "@/i18n";
 import { Logo, Button, Input } from "@/components";
 import { colors } from "@/theme/colors";
 
 const APP_VERSION = APP_CONFIG.APP_VERSION;
 
 const loginSchema = z.object({
-  email: z.string().email("Email inválido"),
-  password: z.string().min(6, "Contraseña es requerida"),
+  email: z.string().email(`${t("auth.login.zod.email")}`),
+  password: z.string().min(6, `${t("auth.login.zod.password")}`),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -45,7 +45,7 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const { error, data: responseData } = await authClient.signIn.email(
+      const { error } = await authClient.signIn.email(
         {
           email: data.email,
           password: data.password,
@@ -57,25 +57,12 @@ export default function Login() {
         },
       );
 
-      if (responseData) {
-        Toast.show({
-          type: "success",
-          text1: "Inicio de sesión exitoso",
-          text2: "Bienvenido de vuelta",
-          visibilityTime: 2000,
-          onHide: () => {
-            router.replace("/(app)/home");
-          },
-        });
-        return;
-      }
-
       if (error) {
         setIsLoading(false);
         Toast.show({
           type: "error",
-          text1: "Error de inicio de sesión",
-          text2: error.message || "Por favor, verifica tus credenciales",
+          text1: `${t("auth.login.toast.text1")}`,
+          text2: error.message || `${t("auth.login.toast.text2")}`,
         });
       }
     } catch (e) {
@@ -83,8 +70,8 @@ export default function Login() {
       console.error("Error al conectar con el servidor:", e);
       Toast.show({
         type: "error",
-        text1: "Error de conexión",
-        text2: "No se pudo conectar con el servidor",
+        text1: `${t("auth.toast.text1")}`,
+        text2: `${t("auth.toast.text2")}`,
       });
     }
   };
@@ -106,10 +93,8 @@ export default function Login() {
 
       <View style={styles.centeredContent}>
         <View style={styles.welcomeSection}>
-          <Text style={styles.title}>Bienvenido</Text>
-          <Text style={styles.welcomeText}>
-            Inicio de sesión - Fuerza de ventas
-          </Text>
+          <Text style={styles.title}>{t("common.welcome")}</Text>
+          <Text style={styles.welcomeText}>{t("auth.screenTitle")}</Text>
         </View>
 
         <View style={styles.form}>
@@ -118,7 +103,7 @@ export default function Login() {
             name="email"
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
-                placeholder="Usuario"
+                placeholder={t("auth.login.username")}
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
@@ -132,7 +117,7 @@ export default function Login() {
             name="password"
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
-                placeholder="Contraseña"
+                placeholder={t("auth.login.password")}
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
@@ -144,13 +129,14 @@ export default function Login() {
 
           <Button
             onPress={handleSubmit(onSubmit)}
-            title="Iniciar sesión"
+            title={t("auth.login.button")}
           />
         </View>
-      </View>
-
-      <View style={styles.versionContainer}>
-        <Text style={styles.versionText}>Versión {APP_VERSION}</Text>
+        <View style={styles.versionContainer}>
+          <Text
+            style={styles.versionText}
+          >{`${t("common.version")} ${APP_VERSION}`}</Text>
+        </View>
       </View>
     </SafeAreaView>
   );

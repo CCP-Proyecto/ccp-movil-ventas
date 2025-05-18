@@ -79,6 +79,14 @@ export default function AppLayout() {
       />
 
       <Stack.Screen
+        name="getOrders"
+        options={{
+          headerTitle: `${t("menu.getOrdersButton")}`,
+          headerShown: true,
+        }}
+      />
+
+      <Stack.Screen
         name="getClients"
         options={{
           headerTitle: `${t("menu.getClientsButton")}`,

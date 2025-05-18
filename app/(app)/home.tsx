@@ -23,6 +23,10 @@ export default function Home() {
     router.push("/(app)/getDeliveries");
   };
 
+  const handleGetOrders = () => {
+    router.push("/(app)/getOrders");
+  };
+
   const handleGetClients = () => {
     router.push("/(app)/getClients");
   };
@@ -73,6 +77,12 @@ export default function Home() {
           <HomeButton
             title={t("menu.getDeliveriesButton")}
             onPress={handleGetDeliveries}
+          />
+        </View>
+        <View style={styles.buttonsContainer}>
+          <HomeButton
+            title={t("menu.getOrdersButton")}
+            onPress={handleGetOrders}
           />
         </View>
         <View style={styles.buttonsContainer}>

@@ -32,6 +32,7 @@ export default {
     createButton: "Crear pedido",
     registerVisitButton: "Registrar visita",
     getDeliveriesButton: "Entregas",
+    getOrdersButton: "Pedidos",
     getVisitsButton: "Visitas",
     getClientsButton: "Clientes",
     recommendationsButton: "Recomendaciones",
@@ -62,6 +63,18 @@ export default {
     orderDetails: "Detalles",
     orderDate: "Fecha",
     orderCity: "Ciudad",
+  },
+  orders: {
+    screenTitle: "Pedidos",
+    subTitle: "Consulta el estado de tus pedidos",
+    noOrders: "No hay pedidos disponibles",
+    products: "Productos",
+    quantity: "Cantidad",
+    status: {
+      delivered: "Entregado",
+      inProcess: "En proceso",
+      pending: "Pendiente",
+    },
   },
   recommendations: {
     screenTitle: "Recomendaciones",

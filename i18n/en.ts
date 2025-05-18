@@ -1,3 +1,4 @@
+// This file contains the English translations for the application.
 export default {
   common: {
     welcome: "Welcome",
@@ -32,6 +33,7 @@ export default {
     createButton: "Create order",
     registerVisitButton: "Register visit",
     getDeliveriesButton: "Deliveries",
+    getOrdersButton: "Orders",
     getVisitsButton: "Visits",
     getClientsButton: "Clients",
     recommendationsButton: "Recommendations",
@@ -62,6 +64,18 @@ export default {
     orderDetails: "Details",
     orderDate: "Date",
     orderCity: "City",
+  },
+  orders: {
+    screenTitle: "My orders",
+    subTitle: "This is the status of your orders",
+    noOrders: "No hay pedidos disponibles",
+    products: "Products",
+    quantity: "Quantity",
+    status: {
+      delivered: "Delivered",
+      inProcess: "In process",
+      pending: "Pending",
+    },
   },
   recommendations: {
     screenTitle: "Recommendations",

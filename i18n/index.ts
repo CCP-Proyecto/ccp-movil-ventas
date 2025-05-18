@@ -11,14 +11,14 @@ const translations = {
 
 const i18n = new I18n(translations);
 
-const deviceLanguage = getLocales()[0]?.languageCode || "es";
+const deviceLanguage = getLocales()[0]?.languageCode || "en";
 
 i18n.locale = Object.keys(translations).includes(deviceLanguage)
   ? deviceLanguage
-  : "es";
+  : "en";
 
 i18n.enableFallback = true;
-i18n.defaultLocale = "es";
+i18n.defaultLocale = "en";
 
 const t = (key: string, options?: object) => i18n.t(key, options);
 

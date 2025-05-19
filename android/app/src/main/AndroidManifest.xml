@@ -4,6 +4,8 @@
   <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
   <uses-permission android:name="android.permission.VIBRATE"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
   <queries>
     <intent>
       <action android:name="android.intent.action.VIEW"/>
@@ -29,5 +31,8 @@
         <data android:scheme="exp+ccp-movil-ventas"/>
       </intent-filter>
     </activity>
+    <meta-data
+      android:name="com.google.android.geo.API_KEY"
+      android:value="AIzaSyAsa5__Ok49_9Mgml2I6QwJybBawXP4EL4"/>
   </application>
 </manifest>

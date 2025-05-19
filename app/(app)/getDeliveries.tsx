@@ -9,7 +9,19 @@ const estados = [
     estado: "EN BODEGA",
     descripcion: "Paquete en Bodega",
     ciudad: "Bogota",
-    fecha: "06/03/2025",
+    fecha: "16/05/2025",
+  },
+  {
+    estado: "EN RUTA",
+    descripcion: "Paquete en camino",
+    ciudad: "Bogota",
+    fecha: "12/05/2025",
+  },
+  {
+    estado: "ENTREGADO",
+    descripcion: "Paquete entregado",
+    ciudad: "Bogota",
+    fecha: "06/05/2025",
   },
 ];
 

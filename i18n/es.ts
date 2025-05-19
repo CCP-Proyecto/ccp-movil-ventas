@@ -96,6 +96,13 @@ export default {
     button: "Registrar visita",
     buttonLoading: "Registrando visita...",
     visitsHistory: "Historial de visitas",
+    routes: {
+      routeTitle: "Ruta de visitas",
+      subTitle: "Ruta de visitas optimizada",
+      visitSequence: "Secuencia de visitas",
+      routeInfo:
+        "Esta es la ruta optimizada para tus visitas. Puedes ver el orden de las visitas y los detalles de cada una.",
+    },
   },
   clients: {
     screenTitle: "Clientes registrados",

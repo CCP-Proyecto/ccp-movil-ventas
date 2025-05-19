@@ -101,6 +101,14 @@ export default function AppLayout() {
           headerShown: true,
         }}
       />
+
+      <Stack.Screen
+        name="visitRoute"
+        options={{
+          headerTitle: `${t("menu.visitRoute")}`,
+          headerShown: true,
+        }}
+      />
     </Stack>
   );
 }

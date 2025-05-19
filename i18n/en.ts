@@ -37,6 +37,7 @@ export default {
     getVisitsButton: "Visits",
     getClientsButton: "Clients",
     recommendationsButton: "Recommendations",
+    visitRoute: "Visit route",
   },
   createOrder: {
     screenTitle: "Create order",
@@ -97,6 +98,13 @@ export default {
     button: "Register visit",
     buttonLoading: "Registering visit...",
     visitsHistory: "Visit history",
+    routes: {
+      routeTitle: "Visits route",
+      subTitle: "Optimized route for your visits",
+      visitSequence: "Visit sequence",
+      routeInfo:
+        "This route has been optimized for you to minimize travel time and maximize the number of visits.",
+    },
   },
   clients: {
     screenTitle: "Registered clients",

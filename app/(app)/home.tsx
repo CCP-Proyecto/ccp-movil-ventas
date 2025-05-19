@@ -35,6 +35,10 @@ export default function Home() {
     router.push("/(app)/recomendations");
   };
 
+  const handleVisitRoute = () => {
+    router.push("/(app)/visitRoute");
+  };
+
   return (
     <ScrollView
       style={styles.scrollContainer}
@@ -71,6 +75,12 @@ export default function Home() {
           <HomeButton
             title={t("menu.getVisitsButton")}
             onPress={handleGetVisits}
+          />
+        </View>
+        <View style={styles.buttonsContainer}>
+          <HomeButton
+            title={t("menu.visitRoute")}
+            onPress={handleVisitRoute}
           />
         </View>
         <View style={styles.buttonsContainer}>

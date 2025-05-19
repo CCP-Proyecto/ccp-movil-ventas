@@ -14,7 +14,7 @@ import { colors } from "@/theme/colors";
 
 const mockedOrders = [
   {
-    id: "ORD-2023-001",
+    id: "ORD-2025-001",
     date: "10/05/2025",
     status: `${t("orders.status.delivered")}`,
     total: 120000,
@@ -24,14 +24,14 @@ const mockedOrders = [
     ],
   },
   {
-    id: "ORD-2023-002",
+    id: "ORD-2025-002",
     date: "12/05/2025",
     status: `${t("orders.status.inProcess")}`,
     total: 85000,
     products: [{ name: "Galletas Tradicionales", quantity: 10, price: 8500 }],
   },
   {
-    id: "ORD-2023-003",
+    id: "ORD-2025-003",
     date: "15/05/2025",
     status: `${t("orders.status.pending")}`,
     total: 230000,

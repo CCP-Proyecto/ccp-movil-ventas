@@ -4,7 +4,7 @@ export default {
   expo: {
     name: "ccp-movil-ventas",
     slug: "ccp-movil-ventas",
-    version: "0.2.4",
+    version: "0.3.6",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
     scheme: "ccp-sales",

@@ -12,11 +12,12 @@ import {
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Logo } from "@/components";
 import { t } from "@/i18n";
-import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { colors } from "@/theme/colors";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { fetchClient } from "@/services";
 import Toast from "react-native-toast-message";
+import MapViewDirections from "react-native-maps-directions";
 
 type VisitFromAPI = {
   id: string;
@@ -58,6 +59,8 @@ export default function VisitRouteScreen() {
     latitudeDelta: 0.05,
     longitudeDelta: 0.05,
   });
+
+  const mapDirectionsApiKey = "AIzaSyDr6-xiRlE0uA0Ym3k4kbs0Dgj1u292y3U";
 
   const salespersonId = "1234567890";
   const minimumDate = new Date();
@@ -330,6 +333,19 @@ export default function VisitRouteScreen() {
                 region={region}
                 showsUserLocation={true}
                 onMapReady={() => console.log("Mapa cargado correctamente")}
+                ref={(ref) => {
+                  if (ref && visitasRuta.length > 1) {
+                    ref.fitToCoordinates(routeCoordinates, {
+                      edgePadding: {
+                        top: 50,
+                        right: 50,
+                        bottom: 50,
+                        left: 50,
+                      },
+                      animated: true,
+                    });
+                  }
+                }}
               >
                 {visitasRuta.map((visit) => (
                   <Marker
@@ -339,7 +355,7 @@ export default function VisitRouteScreen() {
                       longitude: visit.longitud,
                     }}
                     title={visit.cliente}
-                    description={`${visit.direccion}`}
+                    description={`${visit.direccion}, ${visit.ciudad}`}
                     pinColor={getMarkerColor(visit.orden)}
                   >
                     <View style={styles.markerContainer}>
@@ -354,12 +370,23 @@ export default function VisitRouteScreen() {
                     </View>
                   </Marker>
                 ))}
-                {routeCoordinates.length > 1 && (
-                  <Polyline
-                    coordinates={routeCoordinates}
-                    strokeColor={colors.primary || "#007bff"}
+
+                {visitasRuta.length >= 2 && mapDirectionsApiKey && (
+                  <MapViewDirections
+                    origin={routeCoordinates[0]}
+                    waypoints={
+                      routeCoordinates.length > 2
+                        ? routeCoordinates.slice(1, -1)
+                        : undefined
+                    }
+                    destination={routeCoordinates[routeCoordinates.length - 1]}
+                    apikey={mapDirectionsApiKey}
                     strokeWidth={3}
-                    lineDashPattern={[1]}
+                    strokeColor={"hotpink"}
+                    optimizeWaypoints={true}
+                    onError={(errorMessage) => {
+                      console.log("Error en la ruta:", errorMessage);
+                    }}
                   />
                 )}
               </MapView>

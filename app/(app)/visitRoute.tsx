@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -6,12 +6,31 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
+  Platform,
+  ActivityIndicator,
 } from "react-native";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Logo } from "@/components";
 import { t } from "@/i18n";
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
 import { colors } from "@/theme/colors";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { fetchClient } from "@/services";
+import Toast from "react-native-toast-message";
+
+type VisitFromAPI = {
+  id: string;
+  visitDate: string;
+  comments: string;
+  customerId: string;
+  salespersonId: string;
+  customer?: {
+    id: string;
+    name: string;
+    address: string;
+    phone: string;
+  };
+};
 
 type RouteVisit = {
   id: string;
@@ -23,64 +42,158 @@ type RouteVisit = {
   latitud: number;
   longitud: number;
   orden: number;
+  comments?: string;
 };
-
-// Datos mock para las visitas en ruta
-const visitasRuta: RouteVisit[] = [
-  {
-    id: "v1",
-    cliente: "Supermercado La 14",
-    direccion: "Calle 10 #23-15",
-    ciudad: "Bogotá",
-    fecha: "2025-05-20",
-    hora: "09:00",
-    latitud: 4.624335,
-    longitud: -74.063644,
-    orden: 1,
-  },
-  {
-    id: "v2",
-    cliente: "Tienda Don Juan",
-    direccion: "Carrera 15 #45-20",
-    ciudad: "Bogotá",
-    fecha: "2025-05-20",
-    hora: "11:30",
-    latitud: 4.631231,
-    longitud: -74.072503,
-    orden: 2,
-  },
-  {
-    id: "v3",
-    cliente: "Minimarket El Éxito",
-    direccion: "Av. Siempre Viva 123",
-    ciudad: "Bogotá",
-    fecha: "2025-05-20",
-    hora: "14:00",
-    latitud: 4.645704,
-    longitud: -74.058128,
-    orden: 3,
-  },
-  {
-    id: "v4",
-    cliente: "Almacén Central",
-    direccion: "Calle 80 #20-45",
-    ciudad: "Bogotá",
-    fecha: "2025-05-20",
-    hora: "16:30",
-    latitud: 4.669234,
-    longitud: -74.055223,
-    orden: 4,
-  },
-];
 
 export default function VisitRouteScreen() {
   const [selectedVisit, setSelectedVisit] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [visitasRuta, setVisitasRuta] = useState<RouteVisit[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [region, setRegion] = useState({
     latitude: 4.624335,
     longitude: -74.063644,
     latitudeDelta: 0.05,
     longitudeDelta: 0.05,
   });
+
+  const salespersonId = "1234567890";
+  const minimumDate = new Date();
+
+  const formatDateForAPI = (date: Date): string => {
+    return date.toISOString().split("T")[0]; // Formato YYYY-MM-DD
+  };
+
+  const loadVisitsForDate = useCallback(
+    async (date: Date) => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const formattedDate = formatDateForAPI(date);
+        const endpoint = `/api/visit/salesperson/${salespersonId}/date/${formattedDate}`;
+
+        console.log("Cargando visitas desde:", endpoint);
+
+        const { data } = await fetchClient.get(endpoint);
+
+        console.log("Visitas obtenidas de la API:", data);
+
+        if (Array.isArray(data) && data.length > 0) {
+          const visitasConPromesas = data.map(
+            async (visit: VisitFromAPI, index: number) => {
+              try {
+                const customerResponse = await fetchClient.get(
+                  `/api/customer/${visit.customerId}`,
+                );
+                const customerData = customerResponse.data;
+
+                console.log(
+                  `Datos del cliente ${visit.customerId}:`,
+                  customerData,
+                );
+
+                const visitDateTime = new Date(visit.visitDate);
+                const hora = visitDateTime.toLocaleTimeString("es-CO", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                });
+
+                // Generar coordenadas mock basadas en Bogotá
+                // En un escenario real, estas coordenadas vendrían de geocoding de la dirección
+                const baseLatitude = 4.624335;
+                const baseLongitude = -74.063644;
+                const offset = index * 0.01;
+
+                return {
+                  id: visit.id.toString(),
+                  cliente: customerData.name || `Cliente ${visit.customerId}`,
+                  direccion: customerData.address || "Dirección no disponible",
+                  ciudad: "Bogotá", // Valor por defecto
+                  fecha: formattedDate,
+                  hora: hora,
+                  latitud: baseLatitude + offset,
+                  longitud: baseLongitude + offset * 0.5,
+                  orden: index + 1,
+                  comments: visit.comments,
+                  telefono: customerData.phone || "Teléfono no disponible",
+                  tipoId: customerData.idType || "",
+                };
+              } catch (customerError) {
+                console.error(
+                  `Error al obtener datos del cliente ${visit.customerId}:`,
+                  customerError,
+                );
+
+                const visitDateTime = new Date(visit.visitDate);
+                const hora = visitDateTime.toLocaleTimeString("es-CO", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                });
+
+                const baseLatitude = 4.624335;
+                const baseLongitude = -74.063644;
+                const offset = index * 0.01;
+
+                return {
+                  id: visit.id.toString(),
+                  cliente: `Cliente ${visit.customerId}`,
+                  direccion: "Dirección no disponible",
+                  ciudad: "Bogotá",
+                  fecha: formattedDate,
+                  hora: hora,
+                  latitud: baseLatitude + offset,
+                  longitud: baseLongitude + offset * 0.5,
+                  orden: index + 1,
+                  comments: visit.comments,
+                  telefono: "Teléfono no disponible",
+                  tipoId: "",
+                };
+              }
+            },
+          );
+
+          const visitasConvertidas = await Promise.all(visitasConPromesas);
+
+          setVisitasRuta(visitasConvertidas);
+
+          // Centrar el mapa en la primera visita
+          if (visitasConvertidas.length > 0) {
+            setRegion({
+              latitude: visitasConvertidas[0].latitud,
+              longitude: visitasConvertidas[0].longitud,
+              latitudeDelta: 0.05,
+              longitudeDelta: 0.05,
+            });
+          }
+        } else {
+          setVisitasRuta([]);
+        }
+      } catch (err: any) {
+        console.error("Error al cargar visitas:", err);
+        setError(
+          err.response?.data?.message ||
+            "No se pudieron cargar las visitas. Verifique su conexión.",
+        );
+        setVisitasRuta([]);
+
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "No se pudieron cargar las visitas",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [salespersonId],
+  );
+
+  useEffect(() => {
+    loadVisitsForDate(selectedDate);
+  }, [selectedDate, loadVisitsForDate]);
 
   const routeCoordinates = visitasRuta.map((visit) => ({
     latitude: visit.latitud,
@@ -111,6 +224,88 @@ export default function VisitRouteScreen() {
     }
   };
 
+  const onDateChange = (event: any, selectedDate?: Date) => {
+    setShowDatePicker(Platform.OS === "ios");
+    if (selectedDate) {
+      setSelectedDate(selectedDate);
+    }
+  };
+
+  const formattedSelectedDate = selectedDate.toLocaleDateString("es-CO", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  const renderDateSelector = () => (
+    <View style={styles.dateSelectorContainer}>
+      <Text style={styles.dateSelectorLabel}>
+        {t("visits.routes.selectDate")}
+      </Text>
+      <TouchableOpacity
+        onPress={() => setShowDatePicker(true)}
+        style={styles.dateSelector}
+      >
+        <MaterialIcons
+          name="calendar-today"
+          size={20}
+          color={colors.primary}
+        />
+        <Text style={styles.dateSelectorText}>{formattedSelectedDate}</Text>
+        <MaterialIcons
+          name="arrow-drop-down"
+          size={24}
+          color={colors.primary}
+        />
+      </TouchableOpacity>
+
+      {showDatePicker && (
+        <DateTimePicker
+          value={selectedDate}
+          mode="date"
+          display="calendar"
+          onChange={onDateChange}
+          minimumDate={minimumDate}
+        />
+      )}
+    </View>
+  );
+
+  const renderEmptyState = () => (
+    <View style={styles.emptyContainer}>
+      <MaterialCommunityIcons
+        name="calendar-clock"
+        size={60}
+        color={colors.secondary}
+      />
+      <Text style={styles.emptyTitle}>
+        {error ? "Error al cargar visitas" : t("visits.routes.noVisitsPlanned")}
+      </Text>
+      <Text style={styles.emptySubtitle}>
+        {error ||
+          `${t("visits.routes.noVisitsPlannedDate")} ${formattedSelectedDate}`}
+      </Text>
+      {error && (
+        <TouchableOpacity
+          style={styles.retryButton}
+          onPress={() => loadVisitsForDate(selectedDate)}
+        >
+          <Text style={styles.retryButtonText}>Reintentar</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+
+  const renderLoadingState = () => (
+    <View style={styles.loadingContainer}>
+      <ActivityIndicator
+        size="large"
+        color={colors.primary}
+      />
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -120,112 +315,123 @@ export default function VisitRouteScreen() {
           <Text style={styles.subtitle}>{t("visits.routes.subTitle")}</Text>
         </View>
 
-        <View style={styles.mapContainer}>
-          <MapView
-            provider={PROVIDER_GOOGLE}
-            style={styles.map}
-            region={region}
-            showsUserLocation={true}
-            onMapReady={() => console.log("Mapa cargado correctamente")}
-          >
-            {visitasRuta.map((visit) => (
-              <Marker
-                key={visit.id}
-                coordinate={{
-                  latitude: visit.latitud,
-                  longitude: visit.longitud,
-                }}
-                title={visit.cliente}
-                description={`${visit.hora} - ${visit.direccion}`}
-                pinColor={getMarkerColor(visit.orden)}
+        {renderDateSelector()}
+
+        {isLoading ? (
+          renderLoadingState()
+        ) : visitasRuta.length === 0 ? (
+          renderEmptyState()
+        ) : (
+          <>
+            <View style={styles.mapContainer}>
+              <MapView
+                provider={PROVIDER_GOOGLE}
+                style={styles.map}
+                region={region}
+                showsUserLocation={true}
+                onMapReady={() => console.log("Mapa cargado correctamente")}
               >
-                <View style={styles.markerContainer}>
-                  <View
-                    style={[
-                      styles.marker,
-                      { backgroundColor: getMarkerColor(visit.orden) },
-                    ]}
+                {visitasRuta.map((visit) => (
+                  <Marker
+                    key={visit.id}
+                    coordinate={{
+                      latitude: visit.latitud,
+                      longitude: visit.longitud,
+                    }}
+                    title={visit.cliente}
+                    description={`${visit.direccion}`}
+                    pinColor={getMarkerColor(visit.orden)}
                   >
-                    <Text style={styles.markerText}>{visit.orden}</Text>
-                  </View>
-                </View>
-              </Marker>
-            ))}
-            <Polyline
-              coordinates={routeCoordinates}
-              strokeColor={colors.primary || "#007bff"}
-              strokeWidth={3}
-              lineDashPattern={[1]}
-            />
-          </MapView>
-        </View>
+                    <View style={styles.markerContainer}>
+                      <View
+                        style={[
+                          styles.marker,
+                          { backgroundColor: getMarkerColor(visit.orden) },
+                        ]}
+                      >
+                        <Text style={styles.markerText}>{visit.orden}</Text>
+                      </View>
+                    </View>
+                  </Marker>
+                ))}
+                {routeCoordinates.length > 1 && (
+                  <Polyline
+                    coordinates={routeCoordinates}
+                    strokeColor={colors.primary || "#007bff"}
+                    strokeWidth={3}
+                    lineDashPattern={[1]}
+                  />
+                )}
+              </MapView>
+            </View>
 
-        <View style={styles.listContainer}>
-          <Text style={styles.listTitle}>
-            {t("visits.routes.visitSequence")}
-          </Text>
+            <View style={styles.listContainer}>
+              <Text style={styles.listTitle}>
+                {t("visits.routes.visitSequence")} ({visitasRuta.length})
+              </Text>
 
-          {visitasRuta
-            .sort((a, b) => a.orden - b.orden)
-            .map((visit) => (
-              <TouchableOpacity
-                key={visit.id}
-                style={[
-                  styles.visitCard,
-                  selectedVisit === visit.id && styles.selectedVisitCard,
-                ]}
-                onPress={() => handleVisitSelect(visit.id)}
-              >
-                <View
-                  style={[
-                    styles.visitOrder,
-                    { backgroundColor: getMarkerColor(visit.orden) },
-                  ]}
-                >
-                  <Text style={styles.visitOrderText}>{visit.orden}</Text>
-                </View>
+              {visitasRuta
+                .sort((a, b) => a.orden - b.orden)
+                .map((visit) => (
+                  <TouchableOpacity
+                    key={visit.id}
+                    style={[
+                      styles.visitCard,
+                      selectedVisit === visit.id && styles.selectedVisitCard,
+                    ]}
+                    onPress={() => handleVisitSelect(visit.id)}
+                  >
+                    <View
+                      style={[
+                        styles.visitOrder,
+                        { backgroundColor: getMarkerColor(visit.orden) },
+                      ]}
+                    >
+                      <Text style={styles.visitOrderText}>{visit.orden}</Text>
+                    </View>
 
-                <View style={styles.visitInfo}>
-                  <Text style={styles.visitClient}>{visit.cliente}</Text>
-                  <Text style={styles.visitAddress}>
+                    <View style={styles.visitInfo}>
+                      <Text style={styles.visitClient}>{visit.cliente}</Text>
+                      <Text style={styles.visitAddress}>
+                        <MaterialIcons
+                          name="location-on"
+                          size={14}
+                          color="#666"
+                        />{" "}
+                        {visit.direccion}, {visit.ciudad}
+                      </Text>
+                      {visit.comments && (
+                        <Text style={styles.visitComments}>
+                          💬 {visit.comments}
+                        </Text>
+                      )}
+                    </View>
+
                     <MaterialIcons
-                      name="location-on"
-                      size={14}
-                      color="#666"
-                    />{" "}
-                    {visit.direccion}, {visit.ciudad}
-                  </Text>
-                  <Text style={styles.visitTime}>
-                    <MaterialCommunityIcons
-                      name="clock-outline"
-                      size={14}
-                      color="#666"
-                    />{" "}
-                    {visit.hora}
-                  </Text>
-                </View>
+                      name="chevron-right"
+                      size={24}
+                      color={colors.primary || "#007bff"}
+                      style={styles.visitArrow}
+                    />
+                  </TouchableOpacity>
+                ))}
+            </View>
 
-                <MaterialIcons
-                  name="chevron-right"
-                  size={24}
-                  color={colors.primary || "#007bff"}
-                  style={styles.visitArrow}
+            <View style={styles.infoContainer}>
+              <View style={styles.infoCard}>
+                <MaterialCommunityIcons
+                  name="information-outline"
+                  size={20}
+                  color={colors.primary}
+                  style={styles.infoIcon}
                 />
-              </TouchableOpacity>
-            ))}
-        </View>
-
-        <View style={styles.infoContainer}>
-          <View style={styles.infoCard}>
-            <MaterialCommunityIcons
-              name="information-outline"
-              size={20}
-              color={colors.primary}
-              style={styles.infoIcon}
-            />
-            <Text style={styles.infoText}>{t("visits.routes.routeInfo")}</Text>
-          </View>
-        </View>
+                <Text style={styles.infoText}>
+                  {t("visits.routes.routeInfo")}
+                </Text>
+              </View>
+            </View>
+          </>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -255,6 +461,84 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontFamily: "Comfortaa-Regular",
   },
+
+  dateSelectorContainer: {
+    marginBottom: 20,
+  },
+  dateSelectorLabel: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: 8,
+    fontFamily: "Comfortaa-Bold",
+  },
+  dateSelector: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 12,
+    backgroundColor: "#f8f9fa",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.primary,
+  },
+  dateSelectorText: {
+    flex: 1,
+    marginLeft: 8,
+    fontSize: 16,
+    color: "#333",
+    fontFamily: "Comfortaa-Regular",
+    textTransform: "capitalize",
+  },
+
+  // Estados de carga y vacío
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 60,
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: colors.secondary,
+    fontFamily: "Comfortaa-Regular",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 60,
+    paddingHorizontal: 40,
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#333",
+    fontFamily: "Comfortaa-Bold",
+    marginTop: 16,
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  emptySubtitle: {
+    fontSize: 16,
+    color: colors.secondary,
+    fontFamily: "Comfortaa-Regular",
+    textAlign: "center",
+    lineHeight: 22,
+    marginBottom: 20,
+  },
+  retryButton: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: "white",
+    fontWeight: "600",
+    fontFamily: "Comfortaa-Bold",
+  },
+
   mapContainer: {
     height: 250,
     borderRadius: 12,
@@ -265,22 +549,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-  },
-  mapOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1,
-  },
-  mapOverlayText: {
-    backgroundColor: "rgba(255,255,255,0.8)",
-    padding: 10,
-    borderRadius: 5,
-    textAlign: "center",
   },
   map: {
     ...StyleSheet.absoluteFillObject,
@@ -364,6 +632,13 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: "#666",
     fontFamily: "Comfortaa-Regular",
+    marginBottom: 2,
+  },
+  visitComments: {
+    fontSize: 12,
+    color: "#888",
+    fontFamily: "Comfortaa-Light",
+    fontStyle: "italic",
   },
   visitArrow: {
     marginLeft: 8,

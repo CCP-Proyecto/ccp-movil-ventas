@@ -33,6 +33,8 @@ export default function CreateOrder() {
 
   const customerId = authClient.useSession().data?.user?.userId?.toString();
 
+  //TODO const { data } = await fetchClient.get("/api/customer"); traer todos los clientes asociados al vendedor
+
   const totalOrderValue = useMemo(() => {
     return products.reduce((total, product) => {
       const quantity = quantities[product.id] || 0;
@@ -137,7 +139,7 @@ export default function CreateOrder() {
     setIsLoading(true);
     try {
       const orderData = {
-        customerId: customerId,
+        customerId: "9001234567",
         products: selectedProducts.map((product) => ({
           productId: product.id,
           quantity: quantities[product.id],

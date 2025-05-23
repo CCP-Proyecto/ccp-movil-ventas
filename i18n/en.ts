@@ -32,9 +32,6 @@ export default {
     consultTitle: "Consult",
     createButton: "Create order",
     registerVisitButton: "Register visit",
-    getDeliveriesButton: "Deliveries",
-    getOrdersButton: "Orders",
-    getVisitsButton: "Visits",
     getClientsButton: "Clients",
     recommendationsButton: "Recommendations",
     visitRoute: "Visit route",
@@ -56,28 +53,6 @@ export default {
       },
     },
   },
-  deliveries: {
-    screenTitle: "Deliveries",
-    subTitle: "This is the status of your delivery",
-    noDeliveries: "No deliveries available",
-    trackingNumber: "Tracking number",
-    orderNumber: "Order number",
-    orderDetails: "Details",
-    orderDate: "Date",
-    orderCity: "City",
-  },
-  orders: {
-    screenTitle: "My orders",
-    subTitle: "This is the status of your orders",
-    noOrders: "No hay pedidos disponibles",
-    products: "Products",
-    quantity: "Quantity",
-    status: {
-      delivered: "Delivered",
-      inProcess: "In process",
-      pending: "Pending",
-    },
-  },
   recommendations: {
     screenTitle: "Recommendations",
     permissions: {
@@ -97,6 +72,8 @@ export default {
     visitClientPlaceholder: "Select a client...",
     button: "Register visit",
     buttonLoading: "Registering visit...",
+    comments: "Comments",
+    commentsPlaceholder: "Write your comments...",
     visitsHistory: "Visit history",
     routes: {
       routeTitle: "Visits route",
@@ -104,6 +81,9 @@ export default {
       visitSequence: "Visit sequence",
       routeInfo:
         "This route has been optimized for you to minimize travel time and maximize the number of visits.",
+      selectDate: "Select a date",
+      noVisitsPlanned: "No visits planned",
+      noVisitsPlannedDate: "No visits planned for ",
     },
   },
   clients: {

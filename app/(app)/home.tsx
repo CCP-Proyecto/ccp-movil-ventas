@@ -15,18 +15,6 @@ export default function Home() {
     router.push("/(app)/registerVisit");
   };
 
-  const handleGetVisits = () => {
-    router.push("/(app)/getVisits");
-  };
-
-  const handleGetDeliveries = () => {
-    router.push("/(app)/getDeliveries");
-  };
-
-  const handleGetOrders = () => {
-    router.push("/(app)/getOrders");
-  };
-
   const handleGetClients = () => {
     router.push("/(app)/getClients");
   };
@@ -70,11 +58,10 @@ export default function Home() {
           <Text style={styles.sectionTitle}>{t("menu.consultTitle")}</Text>
           <View style={styles.sectionDivider} />
         </View>
-
         <View style={styles.buttonsContainer}>
           <HomeButton
-            title={t("menu.getVisitsButton")}
-            onPress={handleGetVisits}
+            title={t("menu.getClientsButton")}
+            onPress={handleGetClients}
           />
         </View>
         <View style={styles.buttonsContainer}>
@@ -83,25 +70,6 @@ export default function Home() {
             onPress={handleVisitRoute}
           />
         </View>
-        <View style={styles.buttonsContainer}>
-          <HomeButton
-            title={t("menu.getDeliveriesButton")}
-            onPress={handleGetDeliveries}
-          />
-        </View>
-        <View style={styles.buttonsContainer}>
-          <HomeButton
-            title={t("menu.getOrdersButton")}
-            onPress={handleGetOrders}
-          />
-        </View>
-        <View style={styles.buttonsContainer}>
-          <HomeButton
-            title={t("menu.getClientsButton")}
-            onPress={handleGetClients}
-          />
-        </View>
-
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>AI</Text>
           <View style={styles.sectionDivider} />

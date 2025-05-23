@@ -63,30 +63,6 @@ export default function AppLayout() {
       />
 
       <Stack.Screen
-        name="getVisits"
-        options={{
-          headerTitle: `${t("menu.getVisitsButton")}`,
-          headerShown: true,
-        }}
-      />
-
-      <Stack.Screen
-        name="getDeliveries"
-        options={{
-          headerTitle: `${t("menu.getDeliveriesButton")}`,
-          headerShown: true,
-        }}
-      />
-
-      <Stack.Screen
-        name="getOrders"
-        options={{
-          headerTitle: `${t("menu.getOrdersButton")}`,
-          headerShown: true,
-        }}
-      />
-
-      <Stack.Screen
         name="getClients"
         options={{
           headerTitle: `${t("menu.getClientsButton")}`,
@@ -95,17 +71,17 @@ export default function AppLayout() {
       />
 
       <Stack.Screen
-        name="recomendations"
+        name="visitRoute"
         options={{
-          headerTitle: `${t("menu.recommendationsButton")}`,
+          headerTitle: `${t("menu.visitRoute")}`,
           headerShown: true,
         }}
       />
 
       <Stack.Screen
-        name="visitRoute"
+        name="recomendations"
         options={{
-          headerTitle: `${t("menu.visitRoute")}`,
+          headerTitle: `${t("menu.recommendationsButton")}`,
           headerShown: true,
         }}
       />
